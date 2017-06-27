@@ -14,18 +14,8 @@ signals_list = sort(as.character(signals_df$Signal))
 
 shinyUI(fluidPage(theme = "atspm.css",
 
-#includeCSS("www/atspm.css"),
 
-#<script src="https://use.typekit.net/xxl4fdv.js"></script>
-#<script>try{Typekit.load({ async: true });}catch(e){}</script>        
-
-    #tags$head(
-    #  tags$script(src="https://use.typekit.net/xxl4fdv.js"),
-    #  tags$script(HTML("<script>try{Typekit.load({ async: true });}catch(e){}</script>"))
-    #  ),
-        
     # Application title
-    #tags$div(img(src="")),
     tags$div(img(src="ATSPM Logo.png", align="left", height="50px"),
              img(src="gdot_logo-new.jpg", align="right", height="50px", padding="25px 0px 25px 0px")),
     tags$br(), 
@@ -35,19 +25,19 @@ shinyUI(fluidPage(theme = "atspm.css",
     # Sidebar for input selections
     sidebarLayout(
         sidebarPanel(width = 3,
+                
                 dateRangeInput("date_range", label = "Date Range:",
                                start = "2017-05-09", end = "2017-05-09", 
                                min = "2017-03-21", #start = NULL, end = NULL, min = NULL,
                                format = "mm/dd/yy", startview = "month", weekstart = 0,
                                separator = " - "),
-                tags$hr(),
+                
                 selectInput("signal_id", "Select Signal:",
                             choices = c("Select"="", paste0(signals_df$SignalID, ": ", signals_df$Intersection))),
                 
-                #tags$hr(),
-                
                 selectInput("report_type", "Select Metric:",
                             choices = c("Auto"="", metric_list)),
+                
                 conditionalPanel("input.report_type == 'Purdue Phase Termination'",
                                  # Phase Termination Options
                                  numericInput("y-axis_max", "Y-axis Max", 
@@ -63,6 +53,7 @@ shinyUI(fluidPage(theme = "atspm.css",
                                                label = "Show Ped Activity", 
                                                value = FALSE, 
                                                width = NULL)),
+                
                 conditionalPanel("input.report_type == 'Split Monitor'",
                                  # Split Monitor Options
                                  numericInput("y-axis_max", "Y-axis Max", 0),
@@ -94,14 +85,18 @@ shinyUI(fluidPage(theme = "atspm.css",
                                                label = "Show Percent Skip", 
                                                value = FALSE, 
                                                width = NULL)),
+                
                 conditionalPanel("input.report_type == 'Pedestrian Delay'",
                                  # Pedestrian Delay Options
                                  numericInput("y-axis_max", "Y-axis Max", 0)),
+                
                 #conditionalPanel("", "") # options for the other reports
                 
                 #tags$hr(),
                 
-                actionButton("generatePlots", "Generate Plots", icon = NULL, width = NULL)
+                actionButton("generatePlots", "Generate Plots", icon = NULL, width = NULL),
+                
+                verbatimTextOutput("Click_text")
                 ),
 
         # Main panel with tabs: Map, Table, Plots
