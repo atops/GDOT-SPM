@@ -22,14 +22,14 @@ shinyServer(function(input, output, session) {
         popupContent <- paste(sep = "<br/>",
                               paste0("<b>",as.character(signals_df$Intersection),"</b>"),
                               paste0("MaxTime ID: ", signals_df$SignalID),
-                              paste0(as.character(signals_df$Latitude),",",
+                              paste0(as.character(signals_df$Latitude), ", ",
                                      as.character(signals_df$Longitude)))
         
         output$signalsMap <- renderLeaflet({ 
                 leaflet(signals_df) %>% 
                         # muted gray background
                         addProviderTiles("CartoDB.Positron") %>%
-                        # center on downtown Atlanta
+                        # center on Atlanta
                         setView(lng = -84.387917, lat = 33.758059, zoom = 11) %>%
                         # add signals
                         addCircleMarkers(lng = ~Longitude, 
@@ -37,8 +37,7 @@ shinyServer(function(input, output, session) {
                                          popup = popupContent,
                                          color = ~pal(Zone), 
                                          stroke = FALSE, fillOpacity = 0.8,
-                                         radius = 5) #%>%
-                        #addPopups(signals_df$Longitude, signals_df$Latitude, popup = popupContent)
+                                         radius = 5)
                 })
         
         output$signalsTable <- renderDataTable({
@@ -48,8 +47,8 @@ shinyServer(function(input, output, session) {
                           caption = "List of all Traffic Signals",
                           options = list(autoWidth = TRUE))
                 })
-        #output$row_selected <- input$signalsTable_rows_selected
 
+        # Select Signal ID from map selection
         observe({
                 click <- input$signalsMap_marker_click
                         if(is.null(click)) return()
@@ -67,13 +66,45 @@ shinyServer(function(input, output, session) {
                                                        as.character(click$lng)) })
         })
         
+        # Select Signal ID based on table selection
         observe({
+                r <- input$signalsTable_rows_selected
+                if (length(r)) {
+                        sel <- signals_df[r,]
+                
+                        updateSelectInput(session, "signal_id",
+                                          selected = paste0(sel$SignalID, ": ", 
+                                                            sel$Intersection))
+                }
+        })
+        
+        # Focus map to selected Signal
+        observeEvent(input$signal_id, {
                 sid <- gsub("(^\\d+?):.*", "\\1", input$signal_id)
                 sel <- signals_df[match(sid, signals_df$SignalID),]
                 proxy <- leafletProxy("signalsMap") %>%
-                        setView(lng = sel$Longitude, lat = sel$Latitude, zoom=14) %>%
+                        setView(lng = sel$Longitude, lat = sel$Latitude, zoom=max(14, input$signalsMap_zoom)) %>%
                         clearShapes() %>%
-                        addCircles(sel$Longitude, sel$Latitude, radius = 5, color = "black", fill = FALSE)
+                        addCircles(sel$Longitude, sel$Latitude, radius = 7, color = "#FF00FF", fill = FALSE)
+        })
+        
+        # Clear selected Signal on mouseclick anywhere on map
+        observeEvent(input$signalsMap_click, {
+                proxy <- leafletProxy("signalsMap") %>%
+                        clearShapes()
+                updateSelectInput(session, "signal_id",
+                                  selected = "")
+        })
+        
+        # Button on map to zoom to Atlanta extent
+        observeEvent(input$atlview_button, {
+                proxy <- leafletProxy("signalsMap") %>%
+                        setView(lng = -84.387917, lat = 33.758059, zoom = 11)
+        })
+        # Button on map to zoom to Statewide extent
+        observeEvent(input$stview_button, {
+                proxy <- leafletProxy("signalsMap") %>%
+                        setView(lng = -83.61272, lat = 32.65354, zoom = 7)
         })
         
         # Get data to send to plot function
@@ -89,7 +120,7 @@ shinyServer(function(input, output, session) {
         #                                   report_type))})
         
         #event handler for when action button is clicked
-        observeEvent(input$generatePlots,{
+        observeEvent(input$generatePlots, {
                 
                 #TODO: Need code to check for plot type and get
                 #      appropriate dataset accordingly.
@@ -99,6 +130,8 @@ shinyServer(function(input, output, session) {
                         session$sendCustomMessage(type = "purdue_coord", 
                                                   dataset)
                 }
+                
+                updateTabsetPanel(session, "tabs", selected = "Charts")
         })
         
 })

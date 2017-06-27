@@ -38,72 +38,84 @@ shinyUI(fluidPage(theme = "atspm.css",
                 selectInput("report_type", "Select Metric:",
                             choices = c("Auto"="", metric_list)),
                 
-                conditionalPanel("input.report_type == 'Purdue Phase Termination'",
-                                 # Phase Termination Options
-                                 numericInput("y-axis_max", "Y-axis Max", 
-                                              value = 0, min = 0),
-                                 selectInput("consecutive_count", "Consecutive Count",
-                                             choices = c(1,2,3,4,5), # this needs to be reviewed
-                                             selected = 1),
-                                 checkboxInput("show_plans_boolean", 
-                                               label = "Show Plans", 
-                                               value = FALSE, 
-                                               width = NULL),
-                                 checkboxInput("show_ped_activity_boolean", 
-                                               label = "Show Ped Activity", 
-                                               value = FALSE, 
-                                               width = NULL)),
-                
-                conditionalPanel("input.report_type == 'Split Monitor'",
-                                 # Split Monitor Options
-                                 numericInput("y-axis_max", "Y-axis Max", 0),
-                                 selectInput("percentile_split", 
-                                             label = "Percentile Split",
-                                             choices = c("No Percentile Split" = "", 
-                                                         c(50, 75, 85, 90, 95))),
-                                 checkboxInput("show_plans_boolean", 
-                                               label = "Show Plans",
-                                               value = FALSE, 
-                                               width = NULL),
-                                 checkboxInput("show_ped_activity_boolean", 
-                                               label = "Show Ped Activity", 
-                                               value = FALSE, 
-                                               width = NULL),
-                                 checkboxInput("show_ave_split_boolean", 
-                                               label = "Show Average Split", 
-                                               value = FALSE, 
-                                               width = NULL),
-                                 checkboxInput("show_max_forceoff_boolean", 
-                                               label = "Show % Max Out/ForceOff", 
-                                               value = FALSE, 
-                                               width = NULL),
-                                 checkboxInput("show_pct_gapouts_boolean", 
-                                               label = "Show Percent GapOuts", 
-                                               value = FALSE, 
-                                               width = NULL),
-                                 checkboxInput("show_pct_skip_boolean", 
-                                               label = "Show Percent Skip", 
-                                               value = FALSE, 
-                                               width = NULL)),
-                
-                conditionalPanel("input.report_type == 'Pedestrian Delay'",
-                                 # Pedestrian Delay Options
-                                 numericInput("y-axis_max", "Y-axis Max", 0)),
+                # conditionalPanel("input.report_type == 'Purdue Phase Termination'",
+                #                  # Phase Termination Options
+                #                  numericInput("y-axis_max", "Y-axis Max", 
+                #                               value = 0, min = 0),
+                #                  selectInput("consecutive_count", "Consecutive Count",
+                #                              choices = c(1,2,3,4,5), # this needs to be reviewed
+                #                              selected = 1),
+                #                  checkboxInput("show_plans_boolean", 
+                #                                label = "Show Plans", 
+                #                                value = FALSE, 
+                #                                width = NULL),
+                #                  checkboxInput("show_ped_activity_boolean", 
+                #                                label = "Show Ped Activity", 
+                #                                value = FALSE, 
+                #                                width = NULL)),
+                # 
+                # conditionalPanel("input.report_type == 'Split Monitor'",
+                #                  # Split Monitor Options
+                #                  numericInput("y-axis_max", "Y-axis Max", 0),
+                #                  selectInput("percentile_split", 
+                #                              label = "Percentile Split",
+                #                              choices = c("No Percentile Split" = "", 
+                #                                          c(50, 75, 85, 90, 95))),
+                #                  checkboxInput("show_plans_boolean", 
+                #                                label = "Show Plans",
+                #                                value = FALSE, 
+                #                                width = NULL),
+                #                  checkboxInput("show_ped_activity_boolean", 
+                #                                label = "Show Ped Activity", 
+                #                                value = FALSE, 
+                #                                width = NULL),
+                #                  checkboxInput("show_ave_split_boolean", 
+                #                                label = "Show Average Split", 
+                #                                value = FALSE, 
+                #                                width = NULL),
+                #                  checkboxInput("show_max_forceoff_boolean", 
+                #                                label = "Show % Max Out/ForceOff", 
+                #                                value = FALSE, 
+                #                                width = NULL),
+                #                  checkboxInput("show_pct_gapouts_boolean", 
+                #                                label = "Show Percent GapOuts", 
+                #                                value = FALSE, 
+                #                                width = NULL),
+                #                  checkboxInput("show_pct_skip_boolean", 
+                #                                label = "Show Percent Skip", 
+                #                                value = FALSE, 
+                #                                width = NULL)),
+                # 
+                # conditionalPanel("input.report_type == 'Pedestrian Delay'",
+                #                  # Pedestrian Delay Options
+                #                  numericInput("y-axis_max", "Y-axis Max", 0)),
                 
                 #conditionalPanel("", "") # options for the other reports
                 
                 #tags$hr(),
                 
-                actionButton("generatePlots", "Generate Plots", icon = NULL, width = NULL),
-                
-                verbatimTextOutput("Click_text")
+                actionButton("generatePlots", "Generate Plots", icon = NULL, width = NULL)
                 ),
 
         # Main panel with tabs: Map, Table, Plots
         mainPanel(width = 9,
-                  tabsetPanel(
-                          tabPanel("Map", leafletOutput("signalsMap", height = 800)),
-                          tabPanel("Signals", DT::dataTableOutput("signalsTable")),
+                  
+                  tabsetPanel(id = "tabs",
+                          
+                          
+                          tabPanel("Map", 
+                                   
+                                   leafletOutput("signalsMap", height = 800),
+                                   absolutePanel(top = 780, left = 30, actionButton("atlview_button", "Atlanta View")),
+                                   absolutePanel(top = 780, left = 150, actionButton("stview_button", "State View")),
+                                   verbatimTextOutput("Click_text")),
+                          
+                          
+                          tabPanel("Signals", 
+                                   
+                                   DT::dataTableOutput("signalsTable")),
+                          
+                          
                           tabPanel("Charts", 
 
                                   #load D3JS library
