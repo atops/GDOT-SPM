@@ -17,7 +17,8 @@ shinyUI(fluidPage(theme = "atspm.css",
 
     # Application title
     tags$div(img(src="ATSPM Logo.png", align="left", height="50px"),
-             img(src="gdot_logo-new.jpg", align="right", height="50px", padding="25px 0px 25px 0px")),
+             img(src="gdot_logo-new.jpg", align="right", height="50px", 
+                 padding="25px 0px 25px 0px")),
     tags$br(), 
     tags$br(),
     tags$div(titlePanel(title="Automated Traffic Signal Performance Measures")),
@@ -33,7 +34,8 @@ shinyUI(fluidPage(theme = "atspm.css",
                                separator = " - "),
                 
                 selectInput("signal_id", "Select Signal:",
-                            choices = c("Select"="", paste0(signals_df$SignalID, ": ", signals_df$Intersection))),
+                            choices = c("Select"="", paste0(signals_df$SignalID, ": ", 
+                                                            signals_df$Intersection))),
                 
                 selectInput("report_type", "Select Metric:",
                             choices = c("Auto"="", metric_list)),
@@ -106,8 +108,10 @@ shinyUI(fluidPage(theme = "atspm.css",
                           tabPanel("Map", 
                                    
                                    leafletOutput("signalsMap", height = 800),
-                                   absolutePanel(top = 780, left = 30, actionButton("atlview_button", "Atlanta View")),
-                                   absolutePanel(top = 780, left = 150, actionButton("stview_button", "State View")),
+                                   absolutePanel(top = 780, left = 30, 
+                                                 actionButton("atlview_button", "Atlanta View")),
+                                   absolutePanel(top = 780, left = 150, 
+                                                 actionButton("stview_button", "State View")),
                                    verbatimTextOutput("Click_text")),
                           
                           

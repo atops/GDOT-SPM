@@ -83,9 +83,15 @@ shinyServer(function(input, output, session) {
                 sid <- gsub("(^\\d+?):.*", "\\1", input$signal_id)
                 sel <- signals_df[match(sid, signals_df$SignalID),]
                 proxy <- leafletProxy("signalsMap") %>%
-                        setView(lng = sel$Longitude, lat = sel$Latitude, zoom=max(14, input$signalsMap_zoom)) %>%
+                        setView(lng = sel$Longitude, 
+                                lat = sel$Latitude, 
+                                zoom = max(14, input$signalsMap_zoom)) %>%
                         clearShapes() %>%
-                        addCircles(sel$Longitude, sel$Latitude, radius = 7, color = "#FF00FF", fill = FALSE)
+                        addCircles(sel$Longitude, 
+                                   sel$Latitude, 
+                                   radius = 7, 
+                                   color = "black", #"#FF00FF", 
+                                   fill = TRUE)
         })
         
         # Clear selected Signal on mouseclick anywhere on map
