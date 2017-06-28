@@ -111,8 +111,8 @@ shinyUI(fluidPage(theme = "atspm.css",
                                    absolutePanel(top = 780, left = 30, 
                                                  actionButton("atlview_button", "Atlanta View")),
                                    absolutePanel(top = 780, left = 150, 
-                                                 actionButton("stview_button", "State View")),
-                                   verbatimTextOutput("Click_text")),
+                                                 actionButton("stview_button", "State View"))),
+                                   #verbatimTextOutput("Click_text")),
                           
                           
                           tabPanel("Signals", 
@@ -122,15 +122,15 @@ shinyUI(fluidPage(theme = "atspm.css",
                           
                           tabPanel("Charts", 
 
-                                  #load D3JS library
+                                  # Load D3JS library
                                   #tags$script(src = "https://d3js.org/d3.v3.min.js"), # v3
                                   #tags$script(src = "https://d3js.org/d3.v4.min.js"), # v4
                                   tags$script(src = "d3/d3.min.js"), # v4
 
-                                  #create div referring to div in the d3script
+                                  # Create div referring to div in the d3 script
                                   tags$div(id = "plots")),
                           
-                                  #load javascript
+                                  # Load d3 javascript
                                   tags$script(src = "purdue_coord2.js")
 
                           )

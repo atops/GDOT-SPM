@@ -30,7 +30,7 @@ shinyServer(function(input, output, session) {
                         # muted gray background
                         addProviderTiles("CartoDB.Positron") %>%
                         # center on Atlanta
-                        setView(lng = -84.387917, lat = 33.758059, zoom = 11) %>%
+                        setView(lng = -84.387917, lat = 33.758059, zoom = 10) %>%
                         # add signals
                         addCircleMarkers(lng = ~Longitude, 
                                          lat = ~Latitude, 
@@ -78,7 +78,7 @@ shinyServer(function(input, output, session) {
                 }
         })
         
-        # Focus map to selected Signal
+        # Focus map to selected Signal and highlight
         observeEvent(input$signal_id, {
                 sid <- gsub("(^\\d+?):.*", "\\1", input$signal_id)
                 sel <- signals_df[match(sid, signals_df$SignalID),]
@@ -86,12 +86,19 @@ shinyServer(function(input, output, session) {
                         setView(lng = sel$Longitude, 
                                 lat = sel$Latitude, 
                                 zoom = max(14, input$signalsMap_zoom)) %>%
-                        clearShapes() %>%
-                        addCircles(sel$Longitude, 
-                                   sel$Latitude, 
-                                   radius = 7, 
-                                   color = "black", #"#FF00FF", 
-                                   fill = TRUE)
+                        clearGroup("selected_group") %>%
+                        # addCircles(sel$Longitude, 
+                        #            sel$Latitude, 
+                        #            radius = 7, 
+                        #            color = "black", #"#FF00FF", 
+                        #            fill = TRUE)
+                        addCircleMarkers(sel$Longitude, 
+                                         sel$Latitude,
+                                         radius = 7,
+                                         fillColor = "black",
+                                         stroke = FALSE,
+                                         fillOpacity = 1.0,
+                                         group = "selected_group")
         })
         
         # Clear selected Signal on mouseclick anywhere on map
@@ -105,7 +112,7 @@ shinyServer(function(input, output, session) {
         # Button on map to zoom to Atlanta extent
         observeEvent(input$atlview_button, {
                 proxy <- leafletProxy("signalsMap") %>%
-                        setView(lng = -84.387917, lat = 33.758059, zoom = 11)
+                        setView(lng = -84.387917, lat = 33.758059, zoom = 10)
         })
         # Button on map to zoom to Statewide extent
         observeEvent(input$stview_button, {
